@@ -7,7 +7,6 @@ from .serializers import SprintSerializer, TaskSerializer, UserSerializer
 
 User = get_user_model()
 
-
 class DefaultMixin(object):
 	"""Default settings for view authentication, permissions,
 		filtering and pagination"""
