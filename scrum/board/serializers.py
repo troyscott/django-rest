@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
-from rest_framework import reverse
+from rest_framework.reverse import reverse
 
 from .models import Sprint, Task
 
@@ -25,9 +25,10 @@ class SprintSerializer(serializers.ModelSerializer):
 		
 class TaskSerializer(serializers.ModelSerializer):
 
-	assigned = 'assigned'
-	#serializers.SlugRelatedField(
-	#		slug_field=User.USERNAME_FIELD, required=False)
+	#assigned = 'assigned'
+	assigned = serializers.SlugRelatedField(
+			        slug_field=User.USERNAME_FIELD, required=False, allow_null=True,
+					        queryset=User.objects.all())
 	status_display = serializers.SerializerMethodField()
 	links = serializers.SerializerMethodField()
 
@@ -58,13 +59,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = User
-		fields = ('id', User.USERNAME_FIELD, 'full_name', 'is_active',)
+		fields = ('id', User.USERNAME_FIELD, 'full_name', 'is_active', 'links')
 
 	def get_links(self, obj):
 		request = self.context['request']
+		username = obj.get_username()
 		return {
-				'self': reverse('user-detail', kwargs={User.USERNAME_FIELD: username}, 
-					request=request),
+			'self': reverse('user-detail',
+				kwargs={User.USERNAME_FIELD: username}, request=request),
+			'tasks': '{}?assigned={}'.format(
+				reverse('task-list', request=request), username)
 		}
-
 

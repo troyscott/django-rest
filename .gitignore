@@ -1,4 +1,5 @@
 envrest/
 *.pyc
 *.swp
+Dockerfile
 
